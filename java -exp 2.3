@@ -1,0 +1,189 @@
+//part A
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+class Employee {
+    String name;
+    int age;
+    double salary;
+
+    public Employee(String name, int age, double salary) {
+        this.name = name;
+        this.age = age;
+        this.salary = salary;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+               "name='" + name + '\'' +
+               ", age=" + age +
+               ", salary=" + salary +
+               '}';
+    }
+}
+
+public class EmployeeSorter {
+    public static void main(String[] args) {
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee("Alice", 30, 75000));
+        employees.add(new Employee("Charlie", 45, 95000));
+        employees.add(new Employee("Bob", 25, 60000));
+        employees.add(new Employee("David", 35, 80000));
+
+        System.out.println("Original List:");
+        employees.forEach(System.out::println);
+
+        // Sort by name (alphabetically)
+        System.out.println("\nSorting by Name:");
+        employees.sort(Comparator.comparing(e -> e.name));
+        employees.forEach(System.out::println);
+
+        // Sort by age (ascending)
+        System.out.println("\nSorting by Age:");
+        employees.sort(Comparator.comparing(e -> e.age));
+        employees.forEach(System.out::println);
+
+        // Sort by salary (descending)
+        System.out.println("\nSorting by Salary (Descending):");
+        employees.sort(Comparator.comparing(e -> e.salary, Comparator.reverseOrder()));
+        employees.forEach(System.out::println);
+    }
+}
+
+//part B
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+class Student {
+    String name;
+    double marks;
+
+    public Student(String name, double marks) {
+        this.name = name;
+        this.marks = marks;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getMarks() {
+        return marks;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+               "name='" + name + '\'' +
+               ", marks=" + marks +
+               '}';
+    }
+}
+
+public class StudentProcessor {
+    public static void main(String[] args) {
+        List<Student> students = new ArrayList<>();
+        students.add(new Student("Jane", 85.5));
+        students.add(new Student("Mike", 70.0));
+        students.add(new Student("Lisa", 92.0));
+        students.add(new Student("John", 78.5));
+        students.add(new Student("Peter", 65.0));
+
+        System.out.println("Original Student List:");
+        students.forEach(System.out::println);
+
+        System.out.println("\nStudents with marks > 75%, sorted by marks, displaying names:");
+        students.stream()
+                .filter(s -> s.getMarks() > 75) // Filters students with marks > 75
+                .sorted(Comparator.comparing(Student::getMarks)) // Sorts them by marks
+                .map(Student::getName) // Maps each student object to just their name
+                .forEach(System.out::println); // Prints each name
+    }
+}
+//part  c
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+class Product {
+    String name;
+    double price;
+    String category;
+
+    public Product(String name, double price, String category) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+               "name='" + name + '\'' +
+               ", price=" + price +
+               ", category='" + category + '\'' +
+               '}';
+    }
+}
+
+public class ProductAnalyzer {
+    public static void main(String[] args) {
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("Laptop", 1200.00, "Electronics"));
+        products.add(new Product("Smartphone", 800.00, "Electronics"));
+        products.add(new Product("Desk", 350.50, "Furniture"));
+        products.add(new Product("Chair", 150.00, "Furniture"));
+        products.add(new Product("Headphones", 100.00, "Electronics"));
+        products.add(new Product("Coffee Table", 250.75, "Furniture"));
+        products.add(new Product("Television", 950.00, "Electronics"));
+
+        // 1. Group products by category
+        System.out.println("1. Products grouped by category:");
+        Map<String, List<Product>> productsByCategory = products.stream()
+                .collect(Collectors.groupingBy(Product::getCategory));
+        productsByCategory.forEach((category, productList) -> {
+            System.out.println("  " + category + ":");
+            productList.forEach(p -> System.out.println("    " + p));
+        });
+
+        // 2. Find the most expensive product in each category
+        System.out.println("\n2. Most expensive product in each category:");
+        Map<String, Optional<Product>> mostExpensivePerCategory = products.stream()
+                .collect(Collectors.groupingBy(
+                        Product::getCategory,
+                        Collectors.maxBy(Comparator.comparingDouble(Product::getPrice))
+                ));
+        mostExpensivePerCategory.forEach((category, optionalProduct) ->
+                optionalProduct.ifPresent(p -> System.out.println("  " + category + ": " + p))
+        );
+
+        // 3. Calculate the average price of all products
+        System.out.println("\n3. Average price of all products:");
+        double averagePrice = products.stream()
+                .collect(Collectors.averagingDouble(Product::getPrice));
+        System.out.printf("  Average price: $%.2f%n", averagePrice);
+    }
+}
+
+
+
